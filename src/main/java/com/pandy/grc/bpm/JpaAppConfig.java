@@ -8,8 +8,10 @@ package com.pandy.grc.bpm;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,16 +32,15 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableJpaRepositories
 @EnableTransactionManagement
 public class JpaAppConfig {
-
+    
     @Bean(name="appDataSource")
-    public DataSource appDataSource(DataSourceProperties dataSourceProperties) {
-
-        return dataSourceProperties.initializeDataSourceBuilder().build();
+    @ConfigurationProperties(prefix="spring.datasource.app")
+    public DataSource appDataSource(DataSourceProperties appDataSourceProperties) {
+        return appDataSourceProperties.initializeDataSourceBuilder().build();
     }
 
     @Bean(name="appEntityManagerFactory")
-    public LocalContainerEntityManagerFactoryBean appEntityManagerFactory(@Qualifier("appDataSource") DataSource appDataSource, EntityManagerFactoryBuilder builder) {
-
+    public LocalContainerEntityManagerFactoryBean appEntityManagerFactory(@Qualifier("appDataSource") DataSource appDataSource, @Autowired EntityManagerFactoryBuilder builder) {
         return builder.dataSource(appDataSource).packages("com.pandy.grc.bpm.app").build();
     }
 
