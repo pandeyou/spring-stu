@@ -3,7 +3,7 @@
  * SMARTDOT PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  */
-package com.pandy.grc.bpm;
+package com.pandy.grc.bpm.def;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
@@ -27,26 +27,32 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * @author <a href="mailto:pandy@smartdot.com">xxx</a>
  * @version 1.0, 2018年11月15日
  */
-
 @Configuration
-@EnableJpaRepositories
+@EnableJpaRepositories(basePackages = "com.pandy.grc.bpm.def", entityManagerFactoryRef = "defEntityManagerFactory", transactionManagerRef = "defTransactionManager")
 @EnableTransactionManagement
-public class JpaAppConfig {
-    
-    @Bean(name="appDataSource")
-    @ConfigurationProperties(prefix="spring.datasource.app")
-    public DataSource appDataSource(DataSourceProperties appDataSourceProperties) {
-        return appDataSourceProperties.initializeDataSourceBuilder().build();
+public class JpaDefConfig {
+
+    @Bean("defDataSourceProperties")
+    @ConfigurationProperties("spring.datasource.def")
+    public DataSourceProperties defDataSourceProperties() {
+        return new DataSourceProperties();
     }
 
-    @Bean(name="appEntityManagerFactory")
-    public LocalContainerEntityManagerFactoryBean appEntityManagerFactory(@Qualifier("appDataSource") DataSource appDataSource, @Autowired EntityManagerFactoryBuilder builder) {
-        return builder.dataSource(appDataSource).packages("com.pandy.grc.bpm.app").build();
+    @Bean("defDataSource")
+    public DataSource defDataSource() {
+        return defDataSourceProperties().initializeDataSourceBuilder().build();
     }
 
-    @Bean(name="appTransactionManager")
-    public PlatformTransactionManager transactionManager(@Qualifier("appEntityManagerFactory") EntityManagerFactory appEntityManagerFactory) {
+    @Bean("defEntityManagerFactory")
+    public LocalContainerEntityManagerFactoryBean defEntityManagerFactory(
+            @Qualifier("defDataSource") DataSource defDataSource, @Autowired EntityManagerFactoryBuilder builder) {
+        return builder.dataSource(defDataSource).packages("com.pandy.grc.bpm.def").build();
+    }
 
-        return new JpaTransactionManager(appEntityManagerFactory);
+    @Bean("defTransactionManager")
+    public PlatformTransactionManager transactionManager(
+            @Qualifier("defEntityManagerFactory") EntityManagerFactory defEntityManagerFactory) {
+
+        return new JpaTransactionManager(defEntityManagerFactory);
     }
 }

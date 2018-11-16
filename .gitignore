@@ -28,3 +28,5 @@ hs_err_pid*
 /.project
 /btm1.tlog
 /btm2.tlog
+/transaction-logs/
+/.apt_generated/
