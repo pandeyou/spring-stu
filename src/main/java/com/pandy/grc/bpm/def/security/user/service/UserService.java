@@ -5,8 +5,6 @@
  */
 package com.pandy.grc.bpm.def.security.user.service;
 
-import com.pandy.grc.bpm.def.security.user.entity.User;
-
 /**
  * <p>
  * 
@@ -19,12 +17,32 @@ public interface UserService {
      * 
      * @return
      */
-    public User addUser(User user);
+    public com.pandy.grc.bpm.def.security.user.vo.User addUser(com.pandy.grc.bpm.def.security.user.vo.User user);
     
     /**
      * 
      * @return
      */
-    public User findUserById(Long id);
+    public com.pandy.grc.bpm.def.security.user.vo.User findUserById(long id);
+    
+    /**
+     * 
+     * @param id
+     */
+    public void removeUserById(long id);
+    
+    /**
+     * 
+     * @param user
+     */
+    public void removeUser(com.pandy.grc.bpm.def.security.user.vo.User user);
+    
+    /**
+     * 
+     * @return
+     */
+    public void updateUser(com.pandy.grc.bpm.def.security.user.vo.User user);
+    
+    
 }
 

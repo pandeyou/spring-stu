@@ -3,14 +3,9 @@
  * SMARTDOT PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  */
-package com.pandy.grc.bpm.def.security.user.entity;
+package com.pandy.grc.bpm.def.security.user.vo;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import java.io.Serializable;
 
 /**
  * <p>
@@ -18,16 +13,24 @@ import javax.persistence.Table;
  * @author <a href="mailto:pandy@smartdot.com">xxx</a>
  * @version 1.0, 2018年11月16日
  */
-@Entity
-@Table(name = "BPM_USER")
-public class User {
+public class User implements Serializable{
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 7666292859962267486L;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ID")
+    public User() {
+        super();
+    }
+
+    public User(Long id, String lastname) {
+        super();
+        this.id = id;
+        this.lastname = lastname;
+    }
+
     Long id;
-
-    @Column(name = "LAST_NAME")
+    
     String lastname;
 
     public Long getId() {
@@ -46,6 +49,9 @@ public class User {
         this.lastname = lastname;
     }
     
-    
+    @Override
+    public String toString() {
+        return "User [id=" + id + ", lastname=" + lastname + "]";
+    }
 }
 

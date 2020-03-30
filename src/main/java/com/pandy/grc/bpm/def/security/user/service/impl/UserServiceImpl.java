@@ -8,6 +8,9 @@ package com.pandy.grc.bpm.def.security.user.service.impl;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.pandy.grc.bpm.def.security.user.dao.UserDao;
@@ -31,15 +34,49 @@ public class UserServiceImpl implements UserService{
     }
     
     @Override
-    public User addUser(User user) {
-        return userDao.save(user);
+    public com.pandy.grc.bpm.def.security.user.vo.User addUser(com.pandy.grc.bpm.def.security.user.vo.User user) {
+        return wrap(userDao.save(unwrap(user)));
     }
 
     @Override
-    public User findUserById(Long id) {
+    @Cacheable(value = "user", key = "'user_'.concat(#id.toString())")
+    public com.pandy.grc.bpm.def.security.user.vo.User findUserById(long id) {
         Optional<User> user = userDao.findById(id);
-        return user.orElse(null);
+        return user.map(e -> wrap(e)).orElse(null);
     }
 
+    @Override
+    @CacheEvict(value = "user", key = "'user_'.concat(#id.toString())")
+	public void removeUserById(long id) {
+    	userDao.deleteById(id);
+	}
+
+	@Override
+	@CacheEvict(value = "user", key = "'user_'.concat(#user.id.toString())")
+	public void removeUser(com.pandy.grc.bpm.def.security.user.vo.User user) {
+		userDao.delete(unwrap(user));
+	}
+
+	@Override
+	@CacheEvict(value = "user", key = "'user_'.concat(#user.id.toString())")
+	public void updateUser(com.pandy.grc.bpm.def.security.user.vo.User user) {
+		userDao.save(unwrap(user));
+	}
+
+	private com.pandy.grc.bpm.def.security.user.vo.User wrap(User user){
+        com.pandy.grc.bpm.def.security.user.vo.User userVo = new com.pandy.grc.bpm.def.security.user.vo.User();
+        userVo.setId(user.getId());
+        userVo.setLastname(user.getLastname());
+        
+        return userVo;
+    }
+    
+    private User unwrap(com.pandy.grc.bpm.def.security.user.vo.User userVo) {
+        User user = new User();
+        user.setId(userVo.getId());
+        user.setLastname(userVo.getLastname());
+        
+        return user;
+    }
 }
 

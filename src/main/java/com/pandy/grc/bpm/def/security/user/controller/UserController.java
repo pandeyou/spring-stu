@@ -5,13 +5,14 @@
  */
 package com.pandy.grc.bpm.def.security.user.controller;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.pandy.grc.bpm.def.security.user.entity.User;
 import com.pandy.grc.bpm.def.security.user.service.UserService;
 
 /**
@@ -29,17 +30,22 @@ public class UserController {
     
     @RequestMapping("/save")
     @ResponseBody
-    public User save() {
-        User user = new User();
-        user.setLastname("pandy");
+    @Transactional
+    public com.pandy.grc.bpm.def.security.user.vo.User save(com.pandy.grc.bpm.def.security.user.vo.User user) {
         return userService.addUser(user);
     }
     
     @RequestMapping("/find/{id}")
     @ResponseBody
-    public User find(@PathVariable Long id) {
-        
+    @Transactional
+    public com.pandy.grc.bpm.def.security.user.vo.User find(@PathVariable Long id) {
         return userService.findUserById(id);
     }
+    
+    @RequestMapping("/manager")
+    public String manager() {
+        return "view/user/manager";
+    }
+    
 }
 
